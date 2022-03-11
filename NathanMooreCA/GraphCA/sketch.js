@@ -161,7 +161,7 @@ let chart04;
 
 function setup() {
     // createCanvas(1425, 800);
-    createCanvas(1425, 1425);
+    createCanvas(1425, 1305);
 
     //decalring (data01) to 'BarChart' 
     chart01 = new BarChart(data01)
