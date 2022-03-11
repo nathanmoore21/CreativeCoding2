@@ -4,7 +4,6 @@ class HorizontalBarChart {
         this.data = _data;
 
         this.title = "Number of Passengers handeld by Irish Airports (Top 3 Continents) ";
-        this.subTitle = "Figures are in millions - Example: Europe '20 = 7,400,000";
         this.chartWidth = 300;
         this.chartHeight = 300;
         this.BarSpacing = 5;
@@ -19,7 +18,6 @@ class HorizontalBarChart {
 
         this.showValues = true;
         this.showLabels = true;
-        this.showNumbers = true;
         this.rotateLabels = false;
 
         this.colors = [color('#f7f0a8'), color('#8de5ec')];
@@ -68,9 +66,6 @@ class HorizontalBarChart {
         textSize(16);
         textAlign(LEFT, BOTTOM);
         text(this.title, 0, (-this.chartHeight) - 20);
-        fill(155);
-        textSize(12);
-        text(this.subTitle, 0, (-this.chartHeight) + 250);
     }
 
     drawTicks() {
@@ -85,7 +80,7 @@ class HorizontalBarChart {
                 fill(255, 200);
                 noStroke();
                 textSize(12);
-                textAlign(CENTER);
+                textAlign(RIGHT, CENTER);
                 text((i * this.tickIncrements).toFixed(this.numPlaces), -this.tickSpacing * -i, 20);
             }
         }
@@ -112,13 +107,11 @@ class HorizontalBarChart {
             rect(0, (-this.chartHeight + (-this.barWidth + (-this.BarSpacing)) * -i), this.scaleData(this.data[i].total), this.barWidth);
 
             //numbers (text)
-            if(this.showNumbers) {
             noStroke();
             fill(255);
             textSize(12);
             textAlign(LEFT, CENTER);
             text(this.data[i].total, -this.scaleData(-this.data[i].total), (-this.chartHeight + (-this.barWidth + (-this.BarSpacing)) * -i) + this.barWidth / 2);
-            }
 
             //text
             if (this.showLabels) {

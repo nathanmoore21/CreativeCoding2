@@ -3,13 +3,14 @@ class StackChart {
     constructor(_data) {
         this.data = _data;
 
-        this.title = "Number of Flights handled by main airports 2018-2020";
-        this.subTitle = "Yellow = Arrivals / Blue = Departures";
+        this.title = "Number of Flights handled by main airports 2015-2020";
+        this.subTitle1 = "Yellow = Arrivals";
+        this.subTitle2 = "Blue = Departures"
         this.chartWidth = 300;
         this.chartHeight = 300;
-        this.BarSpacing = 120;
+        this.BarSpacing = 30;
         this.margin = 30;
-        this.numTicks = 8;
+        this.numTicks = 5;
         this.tickIncrements;
         this.maxValue;
         this.numPlaces = 0;
@@ -66,8 +67,14 @@ class StackChart {
         textSize(16);
         textAlign(LEFT, BOTTOM);
         text(this.title, 0, (-this.chartHeight) - 20);
-        fill(155);
-        text(this.subTitle, 0, (-this.chartHeight) + 260);
+
+        //legend
+        fill('#f7f0a8');//yellow
+        textSize(12);
+        text(this.subTitle1, 0, (-this.chartHeight) + 260);
+        fill('#8de5ec');//blue
+        textSize(12);
+        text(this.subTitle2, 0, (-this.chartHeight) + 275);
     }
 
     drawTicks() {
@@ -77,7 +84,7 @@ class StackChart {
             strokeWeight(1)
             line(0, this.tickSpacing * -i, -10, this.tickSpacing * -i);
 
-            //numbers (text)
+            //numbers (text) - figures
             if (this.showValues) {
                 fill(255, 200);
                 noStroke();
@@ -103,7 +110,6 @@ class StackChart {
         for (let i = 0; i < this.data.length; i++) {
             push()
             for (let j = 0; j < this.data[i].values.length; j++) {
-                console.log(this.data[i].values.length)
                 let colorNumber = j % 2;
 
                 //bars
@@ -114,14 +120,14 @@ class StackChart {
             }
             pop()
 
-            //numbers (text)
+            //numbers (text) - above bars
             noStroke();
             fill(255);
             textSize(12);
             textAlign(CENTER, BOTTOM);
             text(this.data[i].total, ((this.barWidth + this.BarSpacing) * i) + this.barWidth / 2, this.scaleData(-this.data[i].total));
 
-            //text
+            //text - lables
             if (this.showLabels) {
                 if (this.rotateLabels) {
                     push()
@@ -133,7 +139,6 @@ class StackChart {
                     text(this.data[i].name, 0, 0);
                     pop()
                 } else {
-
                     noStroke();
                     fill(255);
                     textSize(14);

@@ -1,15 +1,15 @@
-//second chart
-class HorizontalBarChart {
+//third chart
+class StackChart {
     constructor(_data) {
         this.data = _data;
 
-        this.title = "Number of Passengers handeld by Irish Airports (Top 3 Continents) ";
-        this.subTitle = "Figures are in millions - Example: Europe '20 = 7,400,000";
+        this.title = "Number of Flights handled by main airports 2018-2020";
+        this.subTitle = "Yellow = Arrivals / Blue = Departures";
         this.chartWidth = 300;
         this.chartHeight = 300;
-        this.BarSpacing = 5;
+        this.BarSpacing = 120;
         this.margin = 30;
-        this.numTicks = 10;
+        this.numTicks = 8;
         this.tickIncrements;
         this.maxValue;
         this.numPlaces = 0;
@@ -19,16 +19,15 @@ class HorizontalBarChart {
 
         this.showValues = true;
         this.showLabels = true;
-        this.showNumbers = true;
-        this.rotateLabels = false;
+        this.rotateLabels = true;
 
         this.colors = [color('#f7f0a8'), color('#8de5ec')];
         this.updateValues();
     }
 
     updateValues() {
-        this.tickSpacing = this.chartWidth / this.numTicks;
-        this.availableWidth = this.chartHeight - (this.margin * 2) - (this.BarSpacing * (this.data.length - 1));
+        this.tickSpacing = this.chartHeight / this.numTicks;
+        this.availableWidth = this.chartWidth - (this.margin * 2) - (this.BarSpacing * (this.data.length - 1));
         this.barWidth = this.availableWidth / this.data.length;
         let values = this.data.map(function (x) {
             return x.total
@@ -41,8 +40,7 @@ class HorizontalBarChart {
         push()
         translate(this.posX, this.posY);
         this.drawTicks();
-        //drawing vertical lines rather than horizontal
-        this.drawVerticalLines();
+        this.drawHorizontalLines();
         this.drawRects();
         this.drawAxis();
         this.drawTitle();
@@ -50,15 +48,15 @@ class HorizontalBarChart {
     }
 
     scaleData(num) {
-        return map(num, this.maxValue, 0, this.chartWidth, 0);
+        return map(num, 0, this.maxValue, 0, this.chartHeight);
     }
 
     drawAxis() {
         //chart
         stroke(255, 180);
         strokeWeight(1);
-        line(0, 0, 0, -this.chartHeight); //y
-        line(0, 0, this.chartWidth, 0); //x
+        line(0, 0, 0, -this.chartHeight); //y axis
+        line(0, 0, this.chartWidth, 0); //x axis
     }
 
     drawTitle() {
@@ -69,8 +67,7 @@ class HorizontalBarChart {
         textAlign(LEFT, BOTTOM);
         text(this.title, 0, (-this.chartHeight) - 20);
         fill(155);
-        textSize(12);
-        text(this.subTitle, 0, (-this.chartHeight) + 250);
+        text(this.subTitle, 0, (-this.chartHeight) + 260);
     }
 
     drawTicks() {
@@ -78,47 +75,51 @@ class HorizontalBarChart {
             //ticks
             stroke(255);
             strokeWeight(1)
-            line(this.tickSpacing * i, 10, this.tickSpacing * i, -0);
+            line(0, this.tickSpacing * -i, -10, this.tickSpacing * -i);
 
             //numbers (text)
             if (this.showValues) {
                 fill(255, 200);
                 noStroke();
-                textSize(12);
-                textAlign(CENTER);
-                text((i * this.tickIncrements).toFixed(this.numPlaces), -this.tickSpacing * -i, 20);
+                textSize(14);
+                textAlign(RIGHT, CENTER);
+                text((i * this.tickIncrements).toFixed(this.numPlaces), -15, this.tickSpacing * -i);
             }
         }
     }
 
-    drawVerticalLines() {
+    drawHorizontalLines() {
         for (let i = 0; i <= this.numTicks; i++) {
-            //vertical line
+            //horizontal line
             stroke(255, 50);
             strokeWeight(1)
-            line(-this.tickSpacing * -i, 0, -this.tickSpacing * -i, -this.chartHeight);
+            line(0, this.tickSpacing * -i, this.chartWidth, this.tickSpacing * -i);
         }
     }
 
     drawRects() {
         push();
-        translate(0, this.margin);
+        translate(this.margin, 0);
         for (let i = 0; i < this.data.length; i++) {
-            let colorNumber = i % 2;
+            push()
+            for (let j = 0; j < this.data[i].values.length; j++) {
+                console.log(this.data[i].values.length)
+                let colorNumber = j % 2;
 
-            //bars
-            fill(this.colors[colorNumber]);
-            noStroke();
-            rect(0, (-this.chartHeight + (-this.barWidth + (-this.BarSpacing)) * -i), this.scaleData(this.data[i].total), this.barWidth);
+                //bars
+                fill(this.colors[colorNumber]);
+                noStroke();
+                rect((this.barWidth + this.BarSpacing) * i, 0, this.barWidth, this.scaleData(-this.data[i].values[j].value));
+                translate(0, this.scaleData(-this.data[i].values[j].value))
+            }
+            pop()
 
             //numbers (text)
-            if(this.showNumbers) {
             noStroke();
             fill(255);
             textSize(12);
-            textAlign(LEFT, CENTER);
-            text(this.data[i].total, -this.scaleData(-this.data[i].total), (-this.chartHeight + (-this.barWidth + (-this.BarSpacing)) * -i) + this.barWidth / 2);
-            }
+            textAlign(CENTER, BOTTOM);
+            text(this.data[i].total, ((this.barWidth + this.BarSpacing) * i) + this.barWidth / 2, this.scaleData(-this.data[i].total));
 
             //text
             if (this.showLabels) {
@@ -128,15 +129,16 @@ class HorizontalBarChart {
                     textSize(14);
                     textAlign(LEFT, CENTER);
                     translate(((this.barWidth + this.BarSpacing) * i) + this.barWidth / 2, 10);
-                    rotate(PI / 2)
+                    rotate(PI / 4)
                     text(this.data[i].name, 0, 0);
                     pop()
                 } else {
+
                     noStroke();
                     fill(255);
                     textSize(14);
-                    textAlign(RIGHT, CENTER);
-                    text(this.data[i].name, -10, (-this.chartHeight + (-this.barWidth + (-this.BarSpacing)) * -i) + this.barWidth / 2);
+                    textAlign(CENTER, BOTTOM);
+                    text(this.data[i].name, ((this.barWidth + this.BarSpacing) * i) + this.barWidth / 2, 20);
                 }
             }
         }
